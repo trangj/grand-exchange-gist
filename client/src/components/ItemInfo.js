@@ -1,17 +1,8 @@
-import React, { useState } from "react";
-import {
-  XYPlot,
-  LineSeries,
-  VerticalGridLines,
-  HorizontalGridLines,
-  XAxis,
-  YAxis,
-  Hint
-} from "react-vis";
-import "../../node_modules/react-vis/dist/style.css";
-import { Card, CardContent, Grid, Typography, Button } from "@material-ui/core";
+import React from "react";
+import { Card, CardContent, Grid, Typography } from "@material-ui/core";
+import Graph from "./Graph";
 
-const ItemInfo = ({ item, data, updateData }) => {
+const ItemInfo = ({ item, data }) => {
   const {
     name,
     icon_large,
@@ -23,15 +14,13 @@ const ItemInfo = ({ item, data, updateData }) => {
     day180
   } = item;
 
-  const [hint, setHint] = useState({});
-
   return (
     <>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Card variant="outlined">
             <CardContent>
-              <img src={icon_large} />
+              <img src={icon_large} alt={name} />
               <Typography variant="h5">{name}</Typography>
               <Typography variant="body2">{description}</Typography>
               <Typography variant="body2">{members}</Typography>
@@ -93,19 +82,7 @@ const ItemInfo = ({ item, data, updateData }) => {
         <Grid item xs={12}>
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="h5">Price History Over 6 Months</Typography>
-              <XYPlot height={600} width={1200}>
-                <VerticalGridLines />
-                <HorizontalGridLines />
-                <XAxis />
-                <YAxis />
-                <LineSeries
-                  data={data}
-                  onNearestXY={(datapoint, event) => setHint(datapoint)}
-                />
-                <Hint value={hint} />
-              </XYPlot>
-              <Button onClick={updateData}>Refresh</Button>
+              <Graph data={data} />
             </CardContent>
           </Card>
         </Grid>
