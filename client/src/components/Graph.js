@@ -6,13 +6,13 @@ import {
   HorizontalGridLines,
   XAxis,
   YAxis,
-  Hint
+  Crosshair
 } from "react-vis";
 import "../../node_modules/react-vis/dist/style.css";
 import { Typography, Button, ButtonGroup } from "@material-ui/core";
 
-const Graph = ({ data, updateData }) => {
-  const [hint, setHint] = useState({});
+const Graph = ({ data }) => {
+  const [crosshair, setCrosshair] = useState([]);
   const [domain, setDomain] = useState(0);
 
   const mySIPrefixFormatter = (value, index, scale, tickTotal) => {
@@ -34,16 +34,14 @@ const Graph = ({ data, updateData }) => {
         width={1200}
         margin={{ left: 50, right: 50 }}
         xDomain={[domain, 179]}
+        onMouseLeave={() => setCrosshair([])}
       >
-        <VerticalGridLines />
-        <HorizontalGridLines />
         <XAxis />
         <YAxis tickFormat={mySIPrefixFormatter} />
-        <LineSeries
-          data={data}
-          onNearestXY={(datapoint, event) => setHint(datapoint)}
-        />
-        <Hint value={hint} />
+        <VerticalGridLines />
+        <HorizontalGridLines />
+        <LineSeries data={data} onNearestX={v => setCrosshair([v])} />
+        <Crosshair values={crosshair}></Crosshair>
       </XYPlot>
     </>
   );

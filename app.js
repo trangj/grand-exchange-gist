@@ -9,31 +9,31 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/api/getitem", (req, res) => {
+app.get("/api/getitem", async (req, res) => {
   if (req.query.search in itemList) {
-    const id = itemList[req.query.search];
-    grandExchange
-      .getItem(id)
-      .then(item => {
-        grandExchange
-          .getGraph(id)
-          .then(graph => {
-            const dataPoints = [];
-            let i = 0;
-            for (key in graph.average) {
-              const newPoint = {
-                x: i,
-                y: graph.average[key]
-              };
-              i += 1;
-              dataPoints.push(newPoint);
-            }
-            item.dataPoints = dataPoints;
-            res.json(item);
-          })
-          .catch(console.log);
-      })
-      .catch(console.error);
+    try {
+      const id = itemList[req.query.search];
+      const item = await grandExchange.getItem(id);
+      const graph = await grandExchange.getGraph(id);
+      if (!item || !graph) throw Error("Could not get item or graph");
+
+      const dataPoints = [];
+      let i = 0;
+
+      for (key in graph.daily) {
+        const newPoint = {
+          x: i,
+          y: graph.daily[key]
+        };
+        i += 1;
+        dataPoints.push(newPoint);
+      }
+
+      item.dataPoints = dataPoints;
+      res.status(200).json(item);
+    } catch (err) {
+      res.status(400);
+    }
   }
 });
 
